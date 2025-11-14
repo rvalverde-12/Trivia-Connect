@@ -11,6 +11,6 @@ package com.mycompany.triviaconnect;
 public class TriviaConnect {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        System.out.println("Hola Avalos");
     }
 }
