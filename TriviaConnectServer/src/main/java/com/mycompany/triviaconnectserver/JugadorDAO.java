@@ -12,13 +12,13 @@ import java.sql.*;
  */
 public class JugadorDAO {
     
-    public boolean login(String correo, String contrasena) {
+    public boolean login(String nombre, String contrasena) {
         String sql = "SELECT * FROM Jugador WHERE correo = ? AND contrasena = ?";
 
         try (Connection conn = ConexionBD.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, correo);
+            stmt.setString(1, nombre);
             stmt.setString(2, contrasena);
 
             ResultSet rs = stmt.executeQuery();
@@ -31,15 +31,14 @@ public class JugadorDAO {
         }
     }
 
-    public boolean registrar(String nombre, String correo, String contrasena) {
-        String sql = "INSERT INTO Jugador(nombre_usuario, correo, contrasena) VALUES (?, ?, ?)";
+    public boolean registrar(String nombre, String contrasena) {
+        String sql = "INSERT INTO Jugador(nombre_usuario, contrasena) VALUES (?, ?, ?)";
 
         try (Connection conn = ConexionBD.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, nombre);
-            stmt.setString(2, correo);
-            stmt.setString(3, contrasena);
+            stmt.setString(2, contrasena);
 
             stmt.executeUpdate();
             return true;

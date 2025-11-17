@@ -13,7 +13,7 @@ import java.net.*;
 public class TriviaConnectServer {
 
     
-    private static final int puerto = 5000;
+    private static final int puerto = 6000;
 
     public static void main(String[] args) {
 

@@ -22,7 +22,8 @@ public class LoginGUI extends JFrame {
     private JButton btnUnirseSala;
     private JButton btnRegistrarCuenta;
 
-    public LoginGUI() {
+    public LoginGUI(ClientConnection connection) {
+        this.connection = connection;
         initComponents();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -79,29 +80,13 @@ public class LoginGUI extends JFrame {
         add(btnUnirseSala);
 
         // Eventos
-        btnUnirseSala.addActionListener(e -> conectarAlServidor());
-        btnCrearSala.addActionListener(e -> conectarAlServidor());
+        btnUnirseSala.addActionListener(e -> enviarNombre());
+        btnCrearSala.addActionListener(e -> enviarNombre());
 
         // Abrir pantalla de registro
         btnRegistrarCuenta.addActionListener(e -> new PantallaRegistro());
     }
 
-    private void conectarAlServidor() {
-        String host = "localhost";
-        int port = 5000;
-
-        boolean connected = connection.connect(host, port);
-
-        if (connected) {
-            JOptionPane.showMessageDialog(this, "Conectado al servidor");
-
-            String nombre = getNombre();
-            connection.sendMessage("NOMBRE:" + nombre);
-
-        } else {
-            JOptionPane.showMessageDialog(this, "No se pudo conectar al servidor");
-        }
-    }
 
     // Getters
     public String getNombre() {
@@ -111,4 +96,9 @@ public class LoginGUI extends JFrame {
     public JButton getBtnRegistrarCuenta() {
         return btnRegistrarCuenta;
     }
+    
+    private void enviarNombre() {
+    String nombre = getNombre();
+    connection.sendMessage("NOMBRE:" + nombre);
+}
 }

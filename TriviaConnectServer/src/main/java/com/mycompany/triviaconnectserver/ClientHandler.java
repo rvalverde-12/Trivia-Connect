@@ -60,10 +60,10 @@ public class ClientHandler extends Thread {
     private JugadorDAO jugadorDAO = new JugadorDAO();
 
     private void manejarLogin(String[] datos) {
-        String correo = datos[1];
-        String pass = datos[2];
+        String nombre = datos[1];
+        String contrasena = datos[2];
 
-        boolean ok = jugadorDAO.login(correo, pass);
+        boolean ok = jugadorDAO.login(nombre, contrasena);
 
         if (ok) {
             output.println("OK;LOGIN");
@@ -74,10 +74,9 @@ public class ClientHandler extends Thread {
 
     private void manejarRegister(String[] datos) {
         String nombre = datos[1];
-        String correo = datos[2];
-        String pass = datos[3];
+        String contrasena = datos[2];
 
-        boolean ok = jugadorDAO.registrar(nombre, correo, pass);
+        boolean ok = jugadorDAO.registrar(nombre, contrasena);
 
         if (ok) {
             output.println("OK;REGISTER");
