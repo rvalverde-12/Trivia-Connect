@@ -1,0 +1,4 @@
+com\mycompany\triviaconnectserver\ClientHandler.class
+com\mycompany\triviaconnectserver\JugadorDAO.class
+com\mycompany\triviaconnectserver\TriviaConnectServer.class
+com\mycompany\triviaconnectserver\ConexionBD.class
