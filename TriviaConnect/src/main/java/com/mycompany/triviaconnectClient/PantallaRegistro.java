@@ -6,6 +6,7 @@ package com.mycompany.triviaconnectClient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 /**
  *
@@ -13,14 +14,15 @@ import java.awt.*;
  */
 
 public class PantallaRegistro extends JFrame {
-  
+    private ClientConnection connection;
     private JTextField campoUsuario;
     private JPasswordField campoContrasena;
     private JPasswordField campoConfirmar;
     private JButton botonCrearCuenta;
     private JButton botonVolver;
 
-    public PantallaRegistro() {
+    public PantallaRegistro(ClientConnection connection) {
+        this.connection = connection;
         iniciarComponentes();
         setTitle("Registro de Usuario");
         setSize(450, 350);
@@ -45,7 +47,7 @@ public class PantallaRegistro extends JFrame {
         campoUsuario.setBounds(160, 80, 200, 25);
         add(campoUsuario);
 
-        JLabel etiquetaContrasena = new JLabel("Contraseña:");
+        JLabel etiquetaContrasena = new JLabel("Contrasena:");
         etiquetaContrasena.setBounds(60, 120, 100, 25);
         add(etiquetaContrasena);
 
@@ -68,26 +70,61 @@ public class PantallaRegistro extends JFrame {
         botonVolver = new JButton("Volver");
         botonVolver.setBounds(230, 220, 130, 40);
         add(botonVolver);
+
+        // Eventos
+        botonCrearCuenta.addActionListener(e -> manejarRegistro());
+        botonVolver.addActionListener(e -> dispose());
     }
 
-    public String getUsuario() {
-        return campoUsuario.getText();
+    private void manejarRegistro() {
+        String usuario = campoUsuario.getText().trim();
+        String contrasena = new String(campoContrasena.getPassword());
+        String confirmar = new String(campoConfirmar.getPassword());
+
+        if (usuario.isEmpty() || contrasena.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Complete todos los campos");
+            return;
+        }
+
+        if (!contrasena.equals(confirmar)) {
+            JOptionPane.showMessageDialog(this, "Las contrasenas no coinciden");
+            return;
+        }
+
+        if (contrasena.length() < 4) {
+            JOptionPane.showMessageDialog(this, "La contrasena debe tener al menos 4 caracteres");
+            return;
+        }
+
+//Enviar al servidor
+        connection.sendMessage("REGISTER;" + usuario + ";" + contrasena);
+
+ //Leer respuesta en hilo separado
+        new Thread(() -> {
+            try {
+                String respuesta = connection.readMessage();
+                SwingUtilities.invokeLater(() -> procesarRespuesta(respuesta));
+            } catch (IOException ex) {
+                SwingUtilities.invokeLater(() -> 
+                    JOptionPane.showMessageDialog(this, "Error de conexion: " + ex.getMessage())
+                );
+            }
+        }).start();
     }
 
-    public String getContrasena() {
-        return new String(campoContrasena.getPassword());
-    }
+    private void procesarRespuesta(String respuesta) {
+        if (respuesta == null) {
+            JOptionPane.showMessageDialog(this, "El servidor no respondio");
+            return;
+        }
 
-    public String getConfirmar() {
-        return new String(campoConfirmar.getPassword());
+        String[] partes = respuesta.split(";");
+        if (partes[0].equals("OK")) {
+            JOptionPane.showMessageDialog(this, "Cuenta creada exitosamente!");
+            dispose();
+        } else {
+            String mensaje = partes.length > 2 ? partes[2] : "Error al crear cuenta";
+            JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
-
-    public JButton getBotonCrearCuenta() {
-        return botonCrearCuenta;
-    }
-
-    public JButton getBotonVolver() {
-        return botonVolver;
-    }
-  
 }
